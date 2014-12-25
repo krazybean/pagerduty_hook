@@ -22,8 +22,16 @@ class Relay:
         """
         grabs from primary relay
         """
-        r = requests.get(self.external_relay)
-        return r.json()
+        try:
+            r = requests.get(self.external_relay)
+            try:
+                return r.json()
+            except ValueError as e:
+                print r.text
+        except requests.exceptions.ConnectionError as e:
+            print "Connection Error (initiating 15s sleep): {0}".format(e)
+            time.sleep(15)
+            pass
 
     def repost(self, data):
         """
@@ -39,12 +47,13 @@ class Relay:
         try:
             while True:
                 dataset = self.heartbeat()
-                if dataset.has_key('Queue'):
-                    self.process_display()
-                    self.retext("Nothing new")
-                else:
-                    self.retext("New event, posting...=> [{0}]".format(self.external_dest))
-                    self.repost(dataset)
+                if dataset:
+                    if dataset.has_key('Queue'):
+                        self.process_display()
+                        self.retext("Nothing new")
+                    else:
+                        self.retext("New event, posting...=> [{0}]".format(self.external_dest))
+                        self.repost(dataset)
         except KeyboardInterrupt:
             print " <= [Cancelled]"
 
