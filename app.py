@@ -32,6 +32,11 @@ def json_response():
     else:
         return jsonify(Queue='Empty')
 
+@app.route('/')
+def newrelic_test():
+    check = {}
+    check['status'] = 'alive'
+    return jsonify(check)
 
 if __name__ == '__main__':
     print "Starting flask listener..."
