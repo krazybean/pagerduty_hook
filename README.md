@@ -14,4 +14,3 @@ To pull data off the queue:
 
     curl -X GET http://hostname:port/heartbeat
 
-dats it :/
